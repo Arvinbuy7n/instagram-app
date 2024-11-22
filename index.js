@@ -11,6 +11,11 @@ app.use(express.json());
 
 app.use("/api/todos", todoRouter);
 
+app.get("/users", (req, res) => {
+  const data = JSON.parse(fs.readFileSync("./data.json", "utf-8"));
+  return res.send(data);
+});
+
 app.post("/signup", (req, res) => {
   const { email, password } = req.body;
   const users = JSON.parse(fs.readFileSync("./user.json", "utf-8"));
