@@ -1,42 +1,29 @@
 "use client";
-import axios from "axios";
+
 import Link from "next/link";
-import { useContext } from "react";
-import { toast } from "react-toastify";
-import { UserContext } from "../contexts/user-context";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
+import { useUser } from "../hooks/useAuth";
 
 export default function SignupPage() {
-  const { isSignedIn } = useContext(UserContext);
-  const router = useRouter();
+  const { signUp, isSignedIn } = useUser();
 
   if (isSignedIn) {
     return redirect("/");
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const credential = e.target.credential.value;
+    const password = e.target.password.value;
+    const fullname = e.target.fullname.value;
+    const username = e.target.username.value;
+
+    signUp(credential, password, fullname, username);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center w-full min-h-screen">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          const credential = e.target.credential.value;
-          const password = e.target.password.value;
-          const fullname = e.target.fullname.value;
-          const username = e.target.username.value;
-
-          axios
-            .post(`${process.env.NEXT_PUBLIC_API}/signup`, { credential, password, fullname, username })
-            .then((res) => {
-              toast.success("Та амжилттай бүртгүүллээ!");
-              router.push("/signin");
-            })
-            .catch((err) => {
-              console.error(err);
-              toast.error(err.response.data.message);
-            });
-        }}
-        className="flex flex-col gap-4"
-      >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <label className="flex flex-col">
           Credential
           <input name="credential" type="text" className="text-black" />

@@ -1,14 +1,20 @@
 "use client";
+
 import { redirect } from "next/navigation";
-import { useContext } from "react";
-import { UserContext } from "./contexts/user-context";
+import { useUser } from "./hooks/useAuth";
 
 export default function Home() {
-  const { isSignedIn, setIsSignedIn } = useContext(UserContext);
+  const { isSignedIn, setIsSignedIn, isLoaded } = useUser();
 
   if (!isSignedIn) {
-    return redirect("/signin");
+    redirect("/signin");
+    return null;
   }
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       INSTAGRAM APP
